@@ -37,9 +37,13 @@ class PageController extends Controller
         $settings = Setting::pluck('value', 'key')->toArray();
 
         $testimonials = Testimonial::where('is_active', true)->get();
-        $teamMembers = TeamMember::where('is_active', true)
-                                ->orderBy('order')
-                                ->get();
+
+        // TEMPORARY FIX - Empty team members
+        $teamMembers = [];
+        // TeamMember::where('is_active', true)
+        //           ->orderBy('order')
+        //           ->get();
+
         $services = Service::where('is_active', true)
                       ->orderBy('order')
                       ->get();
@@ -181,28 +185,29 @@ class PageController extends Controller
         // ✅ YEH LINE CORRECT HAI - pages.portfolio-detail view use kar raha hai
         return view('pages.portfolio-detail', compact('portfolio', 'relatedPortfolios', 'settings'));
     }
+
     public function services()
-{
-    $settings = Setting::pluck('value', 'key')->toArray();
+    {
+        $settings = Setting::pluck('value', 'key')->toArray();
 
-    // All active services with ordering
-    $services = Service::where('is_active', true)
-                      ->orderBy('order')
-                      ->get();
+        // All active services with ordering
+        $services = Service::where('is_active', true)
+                          ->orderBy('order')
+                          ->get();
 
-    // Services page data (agar separate table hai toh)
-    $servicesPage = Page::where('page_name', 'services')
-                       ->where('is_active', true)
-                       ->first();
+        // Services page data (agar separate table hai toh)
+        $servicesPage = Page::where('page_name', 'services')
+                           ->where('is_active', true)
+                           ->first();
 
-    // Agar services page nahi hai toh default data
-    if (!$servicesPage) {
-        $servicesPage = (object) [
-            'title' => 'Our Services',
-            'content' => 'We offer comprehensive digital solutions to transform your business...'
-        ];
+        // Agar services page nahi hai toh default data
+        if (!$servicesPage) {
+            $servicesPage = (object) [
+                'title' => 'Our Services',
+                'content' => 'We offer comprehensive digital solutions to transform your business...'
+            ];
+        }
+
+        return view('pages.services', compact('services', 'servicesPage', 'settings'));
     }
-
-    return view('pages.services', compact('services', 'servicesPage', 'settings'));
-}
 }
