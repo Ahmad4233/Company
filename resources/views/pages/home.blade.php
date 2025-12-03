@@ -128,13 +128,13 @@
         <!-- Services Grid - Dynamic -->
         <div class="services-grid">
             <div class="row">
-                @if(isset($services) && is_array($services) && count($services) > 0)
+                @if($services && $services->count() > 0)
                     @foreach($services as $service)
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="service-card-team">
                             <div class="service-image">
-                                <img src="{{ $service['image'] ?? 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }}"
-                                     alt="{{ $service['title'] ?? 'Service' }}" class="service-img">
+                                <img src="{{ $service->image ?? 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }}"
+                                     alt="{{ $service->title ?? 'Service' }}" class="service-img">
                                 <div class="service-stats-overlay">
                                     {{-- Stats agar chahiye to baad mein add kar sakte hain --}}
                                 </div>
@@ -144,16 +144,16 @@
                             </div>
                             <div class="service-content">
                                 <div class="service-icon">
-                                    <i class="{{ $service['icon'] ?? 'fas fa-cog' }}"></i>
+                                    <i class="{{ $service->icon ?? 'fas fa-cog' }}"></i>
                                 </div>
-                                <h3 class="service-title">{{ $service['title'] ?? 'Web Development' }}</h3>
-                                <p class="service-role">{{ $service['subtitle'] ?? 'Premium Service' }}</p>
+                                <h3 class="service-title">{{ $service->title ?? 'Web Development' }}</h3>
+                                <p class="service-role">{{ $service->subtitle ?? 'Premium Service' }}</p>
                                 <p class="service-description">
-                                    {{ $service['description'] ?? 'Professional web development solutions.' }}
+                                    {{ $service->description ?? 'Professional web development solutions.' }}
                                 </p>
                                 <div class="service-features">
-                                    @if(isset($service['features']) && is_array($service['features']) && count($service['features']) > 0)
-                                        @foreach($service['features'] as $feature)
+                                    @if(!empty($service->features))
+                                        @foreach($service->features as $feature)
                                             <span class="feature">{{ $feature }}</span>
                                         @endforeach
                                     @else
@@ -161,8 +161,8 @@
                                         <span class="feature">24/7 Support</span>
                                     @endif
                                 </div>
-                                <a href="{{ $service['button_link'] ?? '#' }}" class="service-cta-btn">
-                                    <span>{{ $service['button_text'] ?? 'Learn More' }}</span>
+                                <a href="{{ $service->button_link ?? '#' }}" class="service-cta-btn">
+                                    <span>{{ $service->button_text ?? 'Learn More' }}</span>
                                     <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -269,11 +269,11 @@
     </div>
 </section>
 
-<!-- Stats Section -->
+<!-- Stats Section - ✅ FIXED HERE -->
 <section class="stats-section">
     <div class="container">
         <div class="row">
-            @if(isset($stats) && is_array($stats))
+            @if(isset($stats) && !empty($stats))
                 @foreach($stats as $stat)
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="stat-card">
@@ -287,6 +287,52 @@
                     </div>
                 </div>
                 @endforeach
+            @else
+                <!-- Fallback stats if $stats is empty -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="250">0</h3>
+                            <p class="stat-label">Projects Completed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="150">0</h3>
+                            <p class="stat-label">Happy Clients</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="5">0</h3>
+                            <p class="stat-label">Years Experience</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="24">0</h3>
+                            <p class="stat-label">Support</p>
+                        </div>
+                    </div>
+                </div>
             @endif
         </div>
     </div>
@@ -333,31 +379,31 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- Team Grid - Dynamic -->
         <div class="team-grid">
             <div class="row">
-                @if(isset($teamMembers) && is_array($teamMembers) && count($teamMembers) > 0)
+                @if($teamMembers && $teamMembers->count() > 0)
                     @foreach($teamMembers as $member)
                     <div class="col-lg-3 col-md-6 mb-4">
                         <div class="team-card">
                             <div class="team-image">
-                                <img src="{{ $member['image'] ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }}"
-                                     alt="{{ $member['name'] ?? 'Team Member' }}" class="member-image">
+                                <img src="{{ $member->image ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }}"
+                                     alt="{{ $member->name ?? 'Team Member' }}" class="member-image">
                                 <div class="team-social">
-                                    @if(isset($member['facebook']))
-                                    <a href="{{ $member['facebook'] }}" class="social-link" target="_blank">
+                                    @if(!empty($member->facebook))
+                                    <a href="{{ $member->facebook }}" class="social-link" target="_blank">
                                         <i class="fab fa-facebook-f"></i>
                                     </a>
                                     @endif
-                                    @if(isset($member['twitter']))
-                                    <a href="{{ $member['twitter'] }}" class="social-link" target="_blank">
+                                    @if(!empty($member->twitter))
+                                    <a href="{{ $member->twitter }}" class="social-link" target="_blank">
                                         <i class="fab fa-twitter"></i>
                                     </a>
                                     @endif
-                                    @if(isset($member['linkedin']))
-                                    <a href="{{ $member['linkedin'] }}" class="social-link" target="_blank">
+                                    @if(!empty($member->linkedin))
+                                    <a href="{{ $member->linkedin }}" class="social-link" target="_blank">
                                         <i class="fab fa-linkedin-in"></i>
                                     </a>
                                     @endif
-                                    @if(isset($member['instagram']))
-                                    <a href="{{ $member['instagram'] }}" class="social-link" target="_blank">
+                                    @if(!empty($member->instagram))
+                                    <a href="{{ $member->instagram }}" class="social-link" target="_blank">
                                         <i class="fab fa-instagram"></i>
                                     </a>
                                     @endif
@@ -367,9 +413,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </button>
                             </div>
                             <div class="team-content">
-                                <h3 class="member-name">{{ $member['name'] ?? 'Team Member' }}</h3>
-                                <p class="member-role">{{ $member['position'] ?? 'Position' }}</p>
-                                <p class="member-bio">{{ $member['bio'] ?? 'Professional team member.' }}</p>
+                                <h3 class="member-name">{{ $member->name ?? 'Team Member' }}</h3>
+                                <p class="member-role">{{ $member->position ?? 'Position' }}</p>
+                                <p class="member-bio">{{ $member->bio ?? 'Professional team member.' }}</p>
                             </div>
                         </div>
                     </div>
@@ -406,36 +452,36 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- Testimonials Grid - Dynamic -->
         <div class="testimonials-grid">
             <div class="row">
-                @if(isset($testimonials) && is_array($testimonials) && count($testimonials) > 0)
+                @if($testimonials && $testimonials->count() > 0)
                     @foreach($testimonials as $testimonial)
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="testimonial-card-modern">
                             <!-- Client Info Top -->
                             <div class="client-header">
                                 <div class="client-avatar-modern">
-                                    <img src="{{ $testimonial['client_image'] ?? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' }}"
-                                         alt="{{ $testimonial['client_name'] ?? 'Client' }}">
+                                    <img src="{{ $testimonial->client_image ?? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' }}"
+                                         alt="{{ $testimonial->client_name ?? 'Client' }}">
                                     <div class="status-indicator"></div>
                                 </div>
                                 <div class="client-info-modern">
-                                    <h4 class="client-name">{{ $testimonial['client_name'] ?? 'Client Name' }}</h4>
-                                    <p class="client-role">{{ $testimonial['client_role'] ?? 'Client Role' }}</p>
-                                    <span class="client-company">{{ $testimonial['company'] ?? 'Company' }}</span>
+                                    <h4 class="client-name">{{ $testimonial->client_name ?? 'Client Name' }}</h4>
+                                    <p class="client-role">{{ $testimonial->client_role ?? 'Client Role' }}</p>
+                                    <span class="client-company">{{ $testimonial->company ?? 'Company' }}</span>
                                 </div>
                             </div>
 
                             <!-- Rating -->
                             <div class="rating-modern">
                                 @for($i = 1; $i <= 5; $i++)
-                                    <i class="fas fa-star {{ $i <= ($testimonial['rating'] ?? 5) ? 'active' : '' }}"></i>
+                                    <i class="fas fa-star {{ $i <= ($testimonial->rating ?? 5) ? 'active' : '' }}"></i>
                                 @endfor
-                                <span class="rating-text">{{ $testimonial['rating'] ?? 5 }}/5</span>
+                                <span class="rating-text">{{ $testimonial->rating ?? 5 }}/5</span>
                             </div>
 
                             <!-- Testimonial Text -->
                             <div class="testimonial-body">
                                 <p class="testimonial-text-modern">
-                                    "{{ $testimonial['testimonial'] ?? 'Great service and professional team!' }}"
+                                    "{{ $testimonial->testimonial ?? 'Great service and professional team!' }}"
                                 </p>
                             </div>
 

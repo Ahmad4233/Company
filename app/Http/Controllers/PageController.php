@@ -10,24 +10,10 @@ use App\Models\Service;
 use App\Models\AboutPage;
 use App\Models\ContactPage;
 use App\Models\Portfolio;
+use Illuminate\Support\Collection;
 
 class PageController extends Controller
 {
-    // public function show($pageName)
-    // {
-    //     if ($pageName === 'about') {
-    //         return $this->about();
-    //     }
-
-    //     $page = Page::where('page_name', $pageName)
-    //                 ->where('is_active', true)
-    //                 ->firstOrFail();
-
-    //     $settings = Setting::pluck('value', 'key')->toArray();
-
-    //     return view('pages.dynamic', compact('page', 'settings'));
-    // }
-
     public function home()
     {
         $page = Page::where('page_name', 'home')
@@ -36,14 +22,16 @@ class PageController extends Controller
 
         $settings = Setting::pluck('value', 'key')->toArray();
 
-        $testimonials = Testimonial::where('is_active', true)->get();
+        // ✅ FIXED: Ensure collections even if empty
+        $testimonials = Testimonial::where('is_active', true)->get() ?? collect();
         $teamMembers = TeamMember::where('is_active', true)
                                 ->orderBy('order')
-                                ->get();
+                                ->get() ?? collect();
         $services = Service::where('is_active', true)
-                      ->orderBy('order')
-                      ->get();
+                          ->orderBy('order')
+                          ->get() ?? collect();
 
+        // ✅ FIXED: Always ensure $stats is array and accessible
         $stats = [
             (object) [
                 'title' => 'Projects Completed',
@@ -74,7 +62,7 @@ class PageController extends Controller
             ];
         }
 
-        return view('pages.home', compact('page', 'settings', 'testimonials', 'teamMembers', 'services','stats'));
+        return view('pages.home', compact('page', 'settings', 'testimonials', 'teamMembers', 'services', 'stats'));
     }
 
     public function about()
@@ -150,8 +138,7 @@ class PageController extends Controller
     {
         $settings = Setting::pluck('value', 'key')->toArray();
 
-        $portfolios = Portfolio::getActivePortfolios();
-
+        $portfolios = Portfolio::getActivePortfolios() ?? collect();
         $categories = Portfolio::where('is_active', true)
                               ->distinct()
                               ->pluck('category')
@@ -176,33 +163,32 @@ class PageController extends Controller
                                      ->where('category', $portfolio->category)
                                      ->where('id', '!=', $portfolio->id)
                                      ->limit(3)
-                                     ->get();
+                                     ->get() ?? collect();
 
-        // ✅ YEH LINE CORRECT HAI - pages.portfolio-detail view use kar raha hai
         return view('pages.portfolio-detail', compact('portfolio', 'relatedPortfolios', 'settings'));
     }
+
     public function services()
-{
-    $settings = Setting::pluck('value', 'key')->toArray();
+    {
+        $settings = Setting::pluck('value', 'key')->toArray();
 
-    // All active services with ordering
-    $services = Service::where('is_active', true)
-                      ->orderBy('order')
-                      ->get();
+        // All active services with ordering
+        $services = Service::where('is_active', true)
+                          ->orderBy('order')
+                          ->get() ?? collect();
 
-    // Services page data (agar separate table hai toh)
-    $servicesPage = Page::where('page_name', 'services')
-                       ->where('is_active', true)
-                       ->first();
+        // Services page data
+        $servicesPage = Page::where('page_name', 'services')
+                           ->where('is_active', true)
+                           ->first();
 
-    // Agar services page nahi hai toh default data
-    if (!$servicesPage) {
-        $servicesPage = (object) [
-            'title' => 'Our Services',
-            'content' => 'We offer comprehensive digital solutions to transform your business...'
-        ];
+        if (!$servicesPage) {
+            $servicesPage = (object) [
+                'title' => 'Our Services',
+                'content' => 'We offer comprehensive digital solutions to transform your business...'
+            ];
+        }
+
+        return view('pages.services', compact('services', 'servicesPage', 'settings'));
     }
-
-    return view('pages.services', compact('services', 'servicesPage', 'settings'));
-}
 }
